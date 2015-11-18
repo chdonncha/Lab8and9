@@ -108,7 +108,7 @@ def containers_remove(id):
 def containers_remove_all():
     """
     Force remove all containers - dangrous!
-    curl -s -X DELETE -H 'Accept: application/json' http://localhost:8080/containers
+    
 
     """
     #start array    
@@ -128,7 +128,6 @@ def containers_remove_all():
 def images_remove_all():
     """
     Force remove all images - dangrous!
-    curl -s -X DELETE -H 'Accept: application/json' http://localhost:8080/images        
 
     """
     #start array
@@ -161,11 +160,6 @@ def containers_create():
     body = request.get_json(force=True)
     image = body['image']
     args = ('run', '-d')
-
-    if ('publish' in body):
-   	 args.append('-p')
-   	 args.append(body['publish'])    
-
     id = docker(*(args + (image,)))[0:12]
     return Response(response='{"id": "%s"}' % id, mimetype="application/json")
 
@@ -200,8 +194,6 @@ def containers_update(id):
         state = body['state']
         if state == 'running':
             docker('restart', id)
-        elif state == 'stopped':
-	    docker('stop',id)
     except:
         pass
 
@@ -216,12 +208,6 @@ def images_update(id):
     curl -s -X PATCH -H 'Content-Type: application/json' http://localhost:8080/images/7f2619ed1768 -d '{"tag": "test:1.0"}'
 
     """
-    
-    body = request.get_json(force=True)
-    tag = body['tag'].lower()
-
-    docker('tag', id, tag)
-
     resp = ''
     return Response(response=resp, mimetype="application/json")
 
