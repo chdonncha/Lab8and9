@@ -178,9 +178,19 @@ def images_create():
     curl -H 'Accept: application/json' -F file=@Dockerfile http://localhost:8080/images
 
     """
-    dockerfile = request.files['file']
     
+    dockerfile = request.files['file'].save('./Dockerfile')
+
+    output = docker('build','--rm', '.')
     resp = ''
+
+    id = re.search('Successfully built (.*)\n', output, 0)
+
+    if id is not None:
+     resp = '{"id":"%s"}' % id.group(1)
+    else:
+     resp = '{"errormessage": "%s"}' % output
+
     return Response(response=resp, mimetype="application/json")
 
 
